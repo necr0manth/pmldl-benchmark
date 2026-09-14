@@ -34,9 +34,13 @@ def run_benchmark(
     engine = configure(config_file)
     results: list[dict[str, Any]] = []
     for case in cases:
-        detail = engine.decide_detailed(
-            case["transcript"], fixture_image(case), case["mission_state"], case["extra_context"]
-        )
+        image = fixture_image(case)
+        if case.get("method") == "check_people":
+            detail = engine.check_people_detailed(image)
+        elif case.get("method") == "describe_image":
+            detail = engine.describe_image_detailed(image)
+        else:
+            detail = engine.decide_detailed(case["transcript"], image, case["mission_state"], case["extra_context"])
         results.append(evaluate_case(case, detail))
     write_jsonl(output / "cases.jsonl", results)
     (output / "summary.json").write_text(

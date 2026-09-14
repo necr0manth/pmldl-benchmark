@@ -45,6 +45,39 @@ def validate_case(case: Any, dataset_path: Path) -> list[str]:
     if not isinstance(case, dict):
         return ["case must be an object"]
     errors: list[str] = []
+    if case.get("method") == "decide":
+        required = {"case_id", "group_id", "split", "transcript", "image", "mission_state", "extra_context", "expected", "metadata", "method"}
+        missing = required - set(case)
+        if missing:
+            return [f"missing fields: {sorted(missing)}"]
+        errors.extend(_validate_image(case["image"], dataset_path))
+        if case["split"] not in SPLITS:
+            errors.append("split must be train, dev, or holdout")
+        if not isinstance(case["metadata"], dict) or case["metadata"].get("source") not in {"synthetic", "real", "other"}:
+            errors.append("metadata.source must be synthetic, real, or other")
+        if not isinstance(case["mission_state"], dict) or not _finite_tree(case["mission_state"]):
+            errors.append("mission_state must be a finite object")
+        expected = case["expected"]
+        if not isinstance(expected, dict) or not isinstance(expected.get("tool"), str) or not isinstance(expected.get("args"), dict) or not isinstance(expected.get("abstain"), bool):
+            errors.append("expected must contain tool,args,abstain")
+        return errors
+    if case.get("method") in {"check_people", "describe_image"}:
+        required = {"case_id", "group_id", "split", "method", "image", "expected", "metadata"}
+        missing = required - set(case)
+        if missing:
+            return [f"missing fields: {sorted(missing)}"]
+        if case["method"] == "check_people":
+            expected = case["expected"]
+            if not isinstance(expected, dict) or expected.get("tool") not in {"idle", "interrupt"} or expected.get("abstain") is not False:
+                errors.append("check_people expected must be non-abstaining idle or interrupt")
+        elif not isinstance(case["expected"], dict) or case["expected"].get("kind") != "nonempty_text":
+            errors.append("describe_image expected must have kind nonempty_text")
+        errors.extend(_validate_image(case["image"], dataset_path))
+        if case["split"] not in SPLITS:
+            errors.append("split must be train, dev, or holdout")
+        if not isinstance(case["metadata"], dict) or case["metadata"].get("source") not in {"synthetic", "real", "other"}:
+            errors.append("metadata.source must be synthetic, real, or other")
+        return errors
     required = {
         "case_id",
         "group_id",
@@ -65,18 +98,7 @@ def validate_case(case: Any, dataset_path: Path) -> list[str]:
             errors.append(f"{field} must be a string" + ("" if field in {"transcript", "extra_context"} else " and non-empty"))
     if case["split"] not in SPLITS:
         errors.append("split must be train, dev, or holdout")
-    image = case["image"]
-    if not isinstance(image, dict) or set(image) != {"status", "path"}:
-        errors.append("image must contain exactly status and path")
-    elif image["status"] not in IMAGE_STATUSES:
-        errors.append("invalid image status")
-    elif image["status"] == "available":
-        if not isinstance(image["path"], str):
-            errors.append("available image requires path")
-        elif not (dataset_path.parent / image["path"]).is_file():
-            errors.append(f"image does not exist: {image['path']}")
-    elif image["path"] is not None:
-        errors.append("non-available image path must be null")
+    errors.extend(_validate_image(case["image"], dataset_path))
     if not isinstance(case["mission_state"], dict):
         errors.append("mission_state must be an object")
     elif not _finite_tree(case["mission_state"]):
@@ -133,6 +155,22 @@ def validate_case(case: Any, dataset_path: Path) -> list[str]:
         errors.append("metadata.source must be synthetic, real, or other")
     elif not isinstance(metadata.get("label_policy_version"), str):
         errors.append("metadata.label_policy_version must be a string")
+    return errors
+
+
+def _validate_image(image: Any, dataset_path: Path) -> list[str]:
+    errors: list[str] = []
+    if not isinstance(image, dict) or set(image) != {"status", "path"}:
+        return ["image must contain exactly status and path"]
+    if image["status"] not in IMAGE_STATUSES:
+        errors.append("invalid image status")
+    elif image["status"] == "available":
+        if not isinstance(image["path"], str):
+            errors.append("available image requires path")
+        elif not (dataset_path.parent / image["path"]).is_file():
+            errors.append(f"image does not exist: {image['path']}")
+    elif image["path"] is not None:
+        errors.append("non-available image path must be null")
     return errors
 
 

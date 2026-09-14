@@ -14,6 +14,8 @@ class Backend(Protocol):
 
     def generate(self, prompt: str, image: bytes | None, mime_type: str | None) -> str: ...
 
+    def generate_messages(self, messages: list[dict[str, Any]]) -> str: ...
+
 
 @dataclass
 class MockBackend:
@@ -28,6 +30,15 @@ class MockBackend:
             if marker in prompt:
                 return response
         return self.default_response
+
+    def generate_messages(self, messages: list[dict[str, Any]]) -> str:
+        text = "\n".join(
+            part.get("text", "")
+            for message in messages
+            for part in (message.get("content", []) if isinstance(message.get("content"), list) else [])
+            if isinstance(part, dict) and part.get("type") == "text"
+        )
+        return self.generate(text, None, None)
 
 
 @dataclass
@@ -50,12 +61,22 @@ class OpenAICompatibleBackend:
                     "image_url": {"url": f"data:{mime_type or 'application/octet-stream'};base64,{encoded}"},
                 }
             )
-        payload = {
+        return self._complete({
             "model": self.model,
             "messages": [{"role": "user", "content": content}],
             "temperature": self.temperature,
             "max_tokens": self.max_tokens,
-        }
+        })
+
+    def generate_messages(self, messages: list[dict[str, Any]]) -> str:
+        return self._complete({
+            "model": self.model,
+            "messages": messages,
+            "temperature": self.temperature,
+            "max_tokens": self.max_tokens,
+        })
+
+    def _complete(self, payload: dict[str, Any]) -> str:
         headers = {"Content-Type": "application/json"}
         if self.api_key_env:
             key = os.environ.get(self.api_key_env)

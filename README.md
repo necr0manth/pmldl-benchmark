@@ -27,6 +27,24 @@ vlm-benchmark v2-run .\datasets\v2\cases.jsonl `
 
 The bundled mock always returns a canonical abstention. It verifies dataset loading, prompt assembly, validation, scoring, and output writing; its score is not a model-quality or perception result.
 
+## Three-method API and image-only cases
+
+The public API has three methods: the backward-compatible `decide(transcript, image, mission_state, extra_context) -> dict`, `check_people(image) -> dict`, and `describe_image(image) -> str`. Method cases set one `method` field; image-only cases contain only their image and method-specific expected output.
+
+Validate and run the unified 125-case method set without a VLM (57 `decide`, 29 `check_people`, 39 `describe_image`):
+
+```powershell
+$env:PYTHONPATH = "src"
+python -m vlm_benchmark validate .\datasets\methods\cases.jsonl
+python -m vlm_benchmark run .\datasets\methods\cases.jsonl `
+  --config .\configs\v2-mock.json `
+  --output C:\Projects\pmldl\runs\methods-mock
+```
+
+`check_people` scores raw JSON validity and idle/interrupt action accuracy. `describe_image` records only non-empty completion and backend success; it does not judge prose content or turn a selected method into semantic correctness. The frozen v2 dataset and its runner remain available unchanged.
+
+For the four sequential unified model runs, use `configs/methods-qwen3.5-4b-q4km.json`, `configs/methods-gemma3-4b-it-q4km.json`, `configs/methods-internvl3.5-4b-q4km.json`, and `configs/methods-smolvlm2-2.2b-q4km.json`. They retain the v2 decision prompt, `fence-only` normalization, and existing backend model aliases. The 57 `decide` rows use v2 field masks/scoring; the two image-only methods use their pinned prompts and method-specific scores.
+
 ## Run a real VLM
 
 The backend must accept multimodal OpenAI-compatible requests at `<base_url>/chat/completions`, normally `/v1/chat/completions`. Images are sent as base64 data URLs in message content.
@@ -159,6 +177,8 @@ decision: dict = decide(
     extra_context="",
 )
 ```
+
+Image-only calls are available after the same `configure(...)`: `check_people("frame.png")` and `describe_image("frame.png")`. The real robot chat branch accepts a visitor utterance; `describe_image` intentionally fixes the benchmark contract to the pinned system prompt plus the picture, with no changing utterance/history or keyword router.
 
 `decide(transcript, image, mission_state, extra_context) -> dict` returns `tool`, `args`, `confidence`, and `abstain`. Invalid or failed backend output returns canonical abstention.
 

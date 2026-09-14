@@ -11,6 +11,8 @@ from .backend import Backend, backend_from_config
 from .validation import normalize_outer_fence, strict_json_loads, validate_decision
 
 DEFAULT_PROMPT = Path(__file__).resolve().parents[2] / "prompts" / "decision-v1.txt"
+PEOPLE_PROMPT = Path(__file__).resolve().parents[2] / "prompts" / "people-system.txt"
+DESCRIPTION_PROMPT = Path(__file__).resolve().parents[2] / "prompts" / "description-system.txt"
 MISSION_FIELDS = {
     "state",
     "interrupt",
@@ -107,6 +109,59 @@ class DecisionEngine:
             return detail["parsed"]
         return {"tool": "idle", "args": {}, "confidence": 0.0, "abstain": True}
 
+    def check_people_detailed(self, image: Any) -> dict[str, Any]:
+        image_status, image_bytes, mime_type = normalize_image(image)
+        return self._image_json_call(PEOPLE_PROMPT.read_text(encoding="utf-8"), image_status, image_bytes, mime_type, validate_people)
+
+    def check_people(self, image: Any) -> dict:
+        detail = self.check_people_detailed(image)
+        if detail["error_kind"] is None and detail["parsed"] is not None:
+            return detail["parsed"]
+        return {"tool": "idle", "args": {}, "confidence": 0.0, "abstain": True}
+
+    def describe_image_detailed(self, image: Any) -> dict[str, Any]:
+        image_status, image_bytes, mime_type = normalize_image(image)
+        return self._image_text_call(DESCRIPTION_PROMPT.read_text(encoding="utf-8"), image_status, image_bytes, mime_type)
+
+    def describe_image(self, image: Any) -> str:
+        detail = self.describe_image_detailed(image)
+        return detail["raw_response"] if detail["error_kind"] is None and detail["raw_response"].strip() else ""
+
+    def _image_json_call(self, system_prompt: str, image_status: str, image_bytes: bytes | None, mime_type: str | None, validator: Any) -> dict[str, Any]:
+        started = time.perf_counter()
+        raw_response = None
+        parsed = None
+        errors: list[str] = []
+        error_kind = None
+        try:
+            raw_response = self.backend.generate_messages(_image_messages(system_prompt, image_bytes, mime_type))
+            normalized, normalization_applied = normalize_outer_fence(raw_response, self.output_normalization)
+            loaded = strict_json_loads(normalized)
+            if isinstance(loaded, dict):
+                parsed = loaded
+            errors.extend(validator(loaded))
+            if errors:
+                error_kind = "schema_error"
+        except (ValueError, json.JSONDecodeError) as exc:
+            error_kind = "invalid_json"
+            errors.append(f"{type(exc).__name__}: {exc}")
+        except Exception as exc:
+            error_kind = "backend_error"
+            errors.append(f"{type(exc).__name__}: {exc}")
+        return {"raw_response": raw_response, "parsed": parsed, "parse_succeeded": parsed is not None, "validation_errors": errors, "error_kind": error_kind, "normalization_applied": locals().get("normalization_applied", False), "effective": fallback(error_kind or "valid"), "latency_ms": round((time.perf_counter() - started) * 1000, 3), "image_included": image_bytes is not None}
+
+    def _image_text_call(self, system_prompt: str, image_status: str, image_bytes: bytes | None, mime_type: str | None) -> dict[str, Any]:
+        started = time.perf_counter()
+        raw_response = None
+        error_kind = None
+        errors: list[str] = []
+        try:
+            raw_response = self.backend.generate_messages(_image_messages(system_prompt, image_bytes, mime_type))
+        except Exception as exc:
+            error_kind = "backend_error"
+            errors.append(f"{type(exc).__name__}: {exc}")
+        return {"raw_response": raw_response, "parsed": None, "parse_succeeded": bool(raw_response and raw_response.strip()), "validation_errors": errors, "error_kind": error_kind, "effective": None, "latency_ms": round((time.perf_counter() - started) * 1000, 3), "image_included": image_bytes is not None}
+
 
 def fallback(reason: str) -> dict[str, Any]:
     return {
@@ -136,6 +191,37 @@ def normalize_image(image: Any) -> tuple[str, bytes | None, str | None]:
     return status, path.read_bytes(), mime_type or mimetypes.guess_type(path.name)[0] or "application/octet-stream"
 
 
+def _image_messages(system_prompt: str, image_bytes: bytes | None, mime_type: str | None) -> list[dict[str, Any]]:
+    content: list[dict[str, Any]] = []
+    if image_bytes is not None:
+        import base64
+        content.append({"type": "image_url", "image_url": {"url": f"data:{mime_type or 'application/octet-stream'};base64,{base64.b64encode(image_bytes).decode('ascii')}"}})
+    return [{"role": "system", "content": system_prompt}, {"role": "user", "content": content}]
+
+
+def validate_people(value: Any) -> list[str]:
+    if not isinstance(value, dict):
+        return ["people decision must be an object"]
+    errors: list[str] = []
+    if set(value) != {"tool", "args", "confidence", "abstain"}:
+        errors.append("top-level fields must be exactly tool,args,confidence,abstain")
+    if value.get("tool") not in {"idle", "interrupt"}:
+        errors.append("tool must be idle or interrupt")
+    if not isinstance(value.get("args"), dict):
+        errors.append("args must be an object")
+    elif value.get("tool") == "idle" and value["args"] != {}:
+        errors.append("idle args must be empty")
+    elif value.get("tool") == "interrupt" and not set(value["args"]).issubset({"reason", "people_count", "looking_at_robot"}):
+        errors.append("interrupt args contain unsupported fields")
+    if isinstance(value.get("confidence"), bool) or not isinstance(value.get("confidence"), (int, float)) or not 0 <= value.get("confidence", -1) <= 1:
+        errors.append("confidence must be finite and in [0,1]")
+    if not isinstance(value.get("abstain"), bool):
+        errors.append("abstain must be boolean")
+    if value.get("abstain") is True and not (value.get("tool") == "idle" and value.get("args") == {}):
+        errors.append("abstain must use canonical idle with empty args")
+    return errors
+
+
 _default_engine: DecisionEngine | None = None
 
 
@@ -159,3 +245,15 @@ def decide(transcript: str, image: Any, mission_state: dict[str, Any], extra_con
     if _default_engine is None:
         raise RuntimeError("call vlm_benchmark.configure(...) before decide(...)")
     return _default_engine.decide(transcript, image, mission_state, extra_context)
+
+
+def check_people(image: Any) -> dict:
+    if _default_engine is None:
+        raise RuntimeError("call vlm_benchmark.configure(...) before check_people(...)")
+    return _default_engine.check_people(image)
+
+
+def describe_image(image: Any) -> str:
+    if _default_engine is None:
+        raise RuntimeError("call vlm_benchmark.configure(...) before describe_image(...)")
+    return _default_engine.describe_image(image)
