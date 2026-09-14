@@ -1,0 +1,9 @@
+# Expanded Part B
+
+This is the independent synthetic `xb01`–`xb08` development shard for the frozen VLM decision contract. It contains 8 raster scenes and 40 JSONL cases, five per scene: audience, free scene description, known `start_tour`, known `goto_exhibit`, and an ambiguous/missing-context or priority variant.
+
+All cases use `split: dev`, and each image has one `group_id`; no group is split across datasets. The image is supplied by the relative path in `cases.jsonl`. Golden decisions and the scene rubric are evaluator-only and are not part of the model prompt. Every oracle includes an abstention option; invalid output, backend failure, and abstention remain distinct from a valid model decision, with trusted effective fallback represented by `idle` plus optional clarification.
+
+The eight scenes deliberately cover: poster people that must not be counted; a visitor beside a statue; overlapping visitors; a cropped edge visitor; distant visitors with uncertain orientation; backlighting; dim/noisy capture; and phone-use plus display-screen distractors. Visual inspection confirmed the intended composition for all eight images. The main residual uncertainties are attention/readiness (never inferred), people outside the frame, distant orientation, and printed/statue human-like distractors.
+
+Clear audience, scene, start, and goto cases contain only their intended acceptable decision; abstention is retained for genuinely insufficient evidence (notably distant orientation and readiness/attention variants). Goto cases use explicit aliases in the transcript and toy-catalog IDs in `extra_context`. `manifest.json` records SHA-256 hashes, generation prompts, observed-vs-intended notes, and per-image uncertainties. The shard is synthetic and should not be treated as evidence of performance on real robot camera frames.

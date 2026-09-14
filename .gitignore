@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.pytest_tmp/
+.coverage
+htmlcov/
+dist/
+build/
+
+# Editors and operating systems
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+configs/*.local.json
+*.pem
+*.key
+
+# Model weights and downloaded runtimes
+models/
+*.gguf
+*.safetensors
+*.onnx
+runtime/downloads/
+runtime/llama.cpp-*/
+*.exe
+*.dll
+*.zip
+*.7z
+*.tar
+*.tar.gz
+
+# Runtime state and generated outputs
+runtime/logs/
+runtime/*.pid
+runtime/comparison/*.pid
+runtime/comparison/current.json
+*.log
+runs/
+outputs/

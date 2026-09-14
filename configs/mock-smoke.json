@@ -1,0 +1,16 @@
+{
+  "name": "mock-smoke",
+  "prompt_path": "../prompts/decision-v1.txt",
+  "backend": {
+    "type": "mock",
+    "responses": {
+      "Начни экскурсию": "{\"tool\":\"start_tour\",\"args\":{\"tour_id\":\"main\"},\"confidence\":0.9,\"abstain\":false}",
+      "Что ты видишь?": "{\"tool\":\"describe_scene\",\"args\":{\"text\":\"Тестовое описание от deterministic stub.\"},\"confidence\":0.5,\"abstain\":false}",
+      "Что видно": "{\"tool\":\"describe_scene\",\"args\":{\"text\":\"Deterministic stub: содержимое изображения не анализировалось.\"},\"confidence\":0.1,\"abstain\":false}",
+      "Опиши": "{\"tool\":\"describe_scene\",\"args\":{\"text\":\"Deterministic stub: содержимое изображения не анализировалось.\"},\"confidence\":0.1,\"abstain\":false}",
+      "Игнорируй": "{\"tool\":\"describe_scene\",\"args\":{\"text\":\"Deterministic stub не подтверждает происхождение экспоната.\"},\"confidence\":0.1,\"abstain\":false}",
+      "Расскажи подтверждённый": "{\"tool\":\"describe_scene\",\"args\":{\"text\":\"Deterministic stub не анализирует сцену или факты.\"},\"confidence\":0.1,\"abstain\":false}"
+    },
+    "default_response": "{\"tool\":\"idle\",\"args\":{},\"confidence\":0,\"abstain\":true}"
+  }
+}

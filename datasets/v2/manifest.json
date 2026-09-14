@@ -1,0 +1,181 @@
+{
+  "dataset_version": "v2.0.0-dev",
+  "status": "synthetic_development_only",
+  "split": "dev",
+  "case_count": 144,
+  "image_count": 40,
+  "case_sha256": "4009f7d89b37d72fb6174f1405b5c62fb2be96d50bbf80bbc23f56d0e193faf2",
+  "assets": [
+    {
+      "path": "../pilot/assets/scene_00_no_people.png",
+      "sha256": "412b16f9b72d7992831fa7f53ba314ac1c8817221f02c25bb433289c8dbd5c59"
+    },
+    {
+      "path": "../pilot/assets/scene_01_two_facing.png",
+      "sha256": "370ad2f5563398998b59aad4744cf342725b8acb1c79976a173609ff161d68a7"
+    },
+    {
+      "path": "../pilot/assets/scene_02_mixed.png",
+      "sha256": "4981d8630026a90773b57e2f25a8377645f8c5282a02f0bb1803173c26282b42"
+    },
+    {
+      "path": "../pilot/assets/scene_03_two_back.png",
+      "sha256": "70f3869613b3ac5355b304196ba41a911714f5457b5ae6faf23550c91f3b2b6d"
+    },
+    {
+      "path": "../expanded/part_a/assets/xa01_lobby.png",
+      "sha256": "aa8cce377f47e06f68105737402363ef164c4db951b67721b1665267b4a238d5"
+    },
+    {
+      "path": "../expanded/part_a/assets/xa02_corridor.png",
+      "sha256": "f4354cd93c2d93e483550edf6624e048d186876d97874949a8fba4d9b26e2329"
+    },
+    {
+      "path": "../expanded/part_a/assets/xa03_dark_gallery.png",
+      "sha256": "37d252eb0774400fff8312220939e74d7635c5aebdd18e5379558f841258b532"
+    },
+    {
+      "path": "../expanded/part_a/assets/xa04_color_hall.png",
+      "sha256": "01841f7da914862d78e276f737a5eb708c7823c334551f4fd46f1046fdcbbfb1"
+    },
+    {
+      "path": "../expanded/part_a/assets/xa05_brick_lounge.png",
+      "sha256": "845bfb0fff0b033d5cdf0faeb6a004e5d69bdc6d2d22f32fc6e115f52278823a"
+    },
+    {
+      "path": "../expanded/part_a/assets/xa06_display_room.png",
+      "sha256": "103f5ce66eae317f26e5a9ebdef3859557c44794a9f03c4855af8181881983a4"
+    },
+    {
+      "path": "../expanded/part_a/assets/xa07_atrium_wave.png",
+      "sha256": "7f63fe230b5fb82db06b983425bfa27e5d27640c025a87e503fe338457ea8dac"
+    },
+    {
+      "path": "../expanded/part_a/assets/xa08_industrial_atrium.png",
+      "sha256": "faaffce91d35b27bcc3b51531c8508f4363b207e1cadaff8d299df225e5c7c71"
+    },
+    {
+      "path": "../expanded/part_b/assets/xb01_poster_gallery.png",
+      "sha256": "4669ebf2e27fdddef566e9fb2686b7a5e937584df35cc79a525e702f0ac47271"
+    },
+    {
+      "path": "../expanded/part_b/assets/xb02_statue_visitor.png",
+      "sha256": "5faecc41ef521f5f9a6a04f771a50d6e0ae580df338ad655fa7337c0df9eba3c"
+    },
+    {
+      "path": "../expanded/part_b/assets/xb03_three_overlap.png",
+      "sha256": "5292682a35abe3111c345ec9639c7d2edc7baff02c9a76d96ab0f7039e1302dd"
+    },
+    {
+      "path": "../expanded/part_b/assets/xb04_edge_crop.png",
+      "sha256": "a980157a4a117d7df35cdc92e045c661154b12527d9c5e83fea181b6c60ec4a9"
+    },
+    {
+      "path": "../expanded/part_b/assets/xb05_long_corridor.png",
+      "sha256": "1f6c645d9fc7a7d438b5a10caa5eead6c6fcaff6fd9242ffeebd9327c53c122c"
+    },
+    {
+      "path": "../expanded/part_b/assets/xb06_backlit_window.png",
+      "sha256": "8eaca61356bc79fc69002e22f202e92c2d95dceff19ea4a5cc95cb7240749755"
+    },
+    {
+      "path": "../expanded/part_b/assets/xb07_dim_gallery.png",
+      "sha256": "7454fdc7a0fce072371c071cc81559332370b1466842f0dfdef227022dea602c"
+    },
+    {
+      "path": "../expanded/part_b/assets/xb08_phone_distractors.png",
+      "sha256": "7e3faac832384dea97bf4614c56b3e22d84647438902f586280bf991df27a54f"
+    },
+    {
+      "path": "new_scenes_a/assets/va01_empty_historic_a.png",
+      "sha256": "0575c984a76d25b62a9568d1f8af0120c7ae768da0b55eb1544cefe7323cdce4"
+    },
+    {
+      "path": "new_scenes_a/assets/va02_empty_historic_b.png",
+      "sha256": "ea6e5044599fd7e6a33b45034e416b75f960368f471b54345e364a37ee614c25"
+    },
+    {
+      "path": "new_scenes_a/assets/va03_science_front.png",
+      "sha256": "9e2ad481c32b788c53641c59bc580a7e977db103933f6531202ba63b03e2f9b2"
+    },
+    {
+      "path": "new_scenes_a/assets/va04_space_back.png",
+      "sha256": "eac2cac57ea9e8180ea0cd052d593d8346733e33db74099b898b915515917848"
+    },
+    {
+      "path": "new_scenes_a/assets/va05_art_seated.png",
+      "sha256": "98f4885271a30171207af13848d90e4d9cdfcd12b01e6f42c86287a6c3c15398"
+    },
+    {
+      "path": "new_scenes_a/assets/va06_architecture_mixed.png",
+      "sha256": "3f6423546878204295d13f0044d0065c7629d1e3e77d83275fba28bf9e7832ef"
+    },
+    {
+      "path": "new_scenes_a/assets/va07_technology_three_front.png",
+      "sha256": "2ecd7628a503cabfa9b02dc2c94b65ff68e3d16e1e5306d89c70954fffde238b"
+    },
+    {
+      "path": "new_scenes_a/assets/va08_diorama_three_back.png",
+      "sha256": "bcbed98daf1b7d529ec083dc612e56267ac6a72e8a97bccc892ee16b099f5e98"
+    },
+    {
+      "path": "new_scenes_a/assets/va09_botanical_five_mixed.png",
+      "sha256": "934b28352470ace39c00fffd5bce9d5b578a7c4c228cf273dee316085511dda3"
+    },
+    {
+      "path": "new_scenes_a/assets/va10_accessible_four_mixed.png",
+      "sha256": "0c84f994a7278ffd0df3c149b6edac79365e4dcaa9862115e3e6b9113f9b9ae3"
+    },
+    {
+      "path": "new_scenes_b/assets/vb01_empty_framed_photo.png",
+      "sha256": "a0b84c7eaf30d99bf4688821c15dbbf2216451caa7470c1bbbb97a452dd193da"
+    },
+    {
+      "path": "new_scenes_b/assets/vb02_visitor_mannequins.png",
+      "sha256": "0863f71d10bba751b439b8c38cec8a8a5a40788a235bbe7e42e1c28de82176a1"
+    },
+    {
+      "path": "new_scenes_b/assets/vb03_four_ticket_counter.png",
+      "sha256": "4331691ae3870c6831bf94e850f83b221dc0edda5bc270fbc54d4a7414564bcf"
+    },
+    {
+      "path": "new_scenes_b/assets/vb04_three_ancient_gallery.png",
+      "sha256": "465d1351c2edc8b1d1a9e21a8209eb898fa96a2b7d2f367722ffb4e919f26cc2"
+    },
+    {
+      "path": "new_scenes_b/assets/vb05_two_hats_bw_gallery.png",
+      "sha256": "537991ab60cf6c9b099ba745bbcebf576ed52eb82eeefacc1e8843abfcd4e6b2"
+    },
+    {
+      "path": "new_scenes_b/assets/vb06_three_backlit_arch.png",
+      "sha256": "f8c54e92f905da858ca4cd794cdb0253465ee888a9bac9904d396a820e338282"
+    },
+    {
+      "path": "new_scenes_b/assets/vb07_two_motion_blur_gallery.png",
+      "sha256": "bf1ac1adfbf461dff15bcce6b31daa4d3af0c0b3efdc6ff144746f43ea15f5ec"
+    },
+    {
+      "path": "new_scenes_b/assets/vb08_one_distant_projection.png",
+      "sha256": "298d76250a4754f7db10bb5c7230508993ed79873badeedf1cc40ee5c4949bd6"
+    },
+    {
+      "path": "new_scenes_b/assets/vb09_four_tilted_low_angle.png",
+      "sha256": "b56c54f4ffb75e4668c197d08ad268b02629bb485a53f8778ebf7350a7efc13f"
+    },
+    {
+      "path": "new_scenes_b/assets/vb10_three_phone_camera_exhibit.png",
+      "sha256": "e485f8ac0a36deee0fa77af19d1e96e7204b501b4a8edfa39f509e29f3ecaf5d"
+    }
+  ],
+  "excluded": {
+    "multi_valid": true,
+    "ask_visitor_without_robot_catalog": true,
+    "scene_free_text": "not_scored",
+    "unknown_facing_author_cases": {
+      "scene_ids": ["vb06", "vb07", "vb08"],
+      "reason": "facing_known=false; audience and policy_edge scored cases skipped rather than coercing unknown to a value",
+      "skipped_case_count": 6
+    }
+  },
+  "pending_author_images": 0
+}

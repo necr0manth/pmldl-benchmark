@@ -1,0 +1,15 @@
+{
+  "scenes": [{
+    "scene_id": "author_a01",
+    "image_path": "assets/author_a01.png",
+    "sha256": "sha256-hex",
+    "visible_count": 0,
+    "facing_robot_count": null,
+    "count_known": true,
+    "facing_known": false,
+    "observations": ["one visible object"],
+    "uncertainties": ["attention is not observable"],
+    "generation_prompt": "prompt used only for provenance",
+    "source": "synthetic"
+  }]
+}

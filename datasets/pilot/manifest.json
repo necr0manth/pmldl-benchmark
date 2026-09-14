@@ -1,0 +1,13 @@
+{
+  "dataset_version": "pilot-v1",
+  "created_at": "2026-09-13",
+  "status": "synthetic_development_calibration_only",
+  "split_policy": "all variants of one source image share group_id and split; no holdout",
+  "images": [
+    {"group_id":"g00","path":"assets/scene_00_no_people.png","sha256":"412B16F9B72D7992831FA7F53BA314AC1C8817221F02C25BB433289C8DBD5C59","planned":"0 visible people; museum-lab objects","observed":"0 visible people; bronze mechanical artifact in glass case, blue vessel, red geometric sculpture, plant and bench","manual_review":"passed visual inspection","generation_prompt_ref":"scene_00_no_people"},
+    {"group_id":"g01","path":"assets/scene_01_two_facing.png","sha256":"370AD2F5563398998B59AAD4744CF342725B8ACB1C79976A173609FF161D68A7","planned":"2 visible people, both facing robot","observed":"2 visible people, both clearly facing camera/robot","manual_review":"passed visual inspection","generation_prompt_ref":"scene_01_two_facing"},
+    {"group_id":"g02","path":"assets/scene_02_mixed.png","sha256":"4981D8630026A90773B57E2F25A8377645F8C5282A02F0BB1803173C26282B42","planned":"3 visible people: 2 facing, 1 back","observed":"3 visible people: 2 facing camera/robot, 1 back-facing","manual_review":"passed visual inspection","generation_prompt_ref":"scene_02_mixed"},
+    {"group_id":"g03","path":"assets/scene_03_two_back.png","sha256":"70F3869613B3AC5355B304196BA41A911714F5457B5AE6FAF23550C91F3B2B6D","planned":"2 visible people, both back-facing","observed":"2 visible people, both clearly back-facing; no facing people","manual_review":"passed visual inspection","generation_prompt_ref":"scene_03_two_back"}
+  ],
+  "generation": {"tool":"built-in imagegen","model":"service-managed; not separately specified","programmatic_editing":false,"external_api":false}
+}

@@ -1,0 +1,8 @@
+{
+  "endpoint": "http://127.0.0.1:8080/v1",
+  "model_id": "qwen3.5-4b-q4km",
+  "timeout_seconds": 180,
+  "context_size": 8192,
+  "runtime": "llama.cpp b10941 Vulkan",
+  "reasoning": "off"
+}

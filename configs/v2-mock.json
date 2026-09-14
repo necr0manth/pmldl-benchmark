@@ -1,0 +1,9 @@
+{
+  "name": "v2-mock",
+  "prompt_path": "../prompts/decision-v2.txt",
+  "backend": {
+    "type": "mock",
+    "responses": {},
+    "default_response": "{\"tool\":\"idle\",\"args\":{},\"confidence\":0,\"abstain\":true}"
+  }
+}

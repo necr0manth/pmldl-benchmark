@@ -1,0 +1,20 @@
+{
+  "shard_id": "expanded-part-a",
+  "case_prefix": "xa",
+  "source": "synthetic",
+  "label_policy_version": "v1",
+  "split": "dev",
+  "image_count": 8,
+  "case_count": 40,
+  "lineage": "Generated independently with built-in imagegen; each scene is a single raster frame and was inspected with view_image before labeling.",
+  "assets": {
+    "xa01_lobby.png": {"sha256":"AA8CCE377F47E06F68105737402363EF164C4DB951B67721B1665267B4A238D5","generation_prompt":"Bright modern museum lobby; one close frontal visitor, arms down."},
+    "xa02_corridor.png": {"sha256":"F4354CD93C2D93E483550EDF6624E048D186876D97874949A8FBA4D9B26E2329","generation_prompt":"Dark blue side corridor; one visitor in profile toward a bust."},
+    "xa03_dark_gallery.png": {"sha256":"37D252EB0774400FFF8312220939E74D7635C5AEBDD18E5379558F841258B532","generation_prompt":"Spacious dark gallery; four separated frontal visitors."},
+    "xa04_color_hall.png": {"sha256":"01841F7DA914862D78E276F737A5EB708C7823C334551F4FD46F1046FDCBBFB1","generation_prompt":"Colorful turquoise/coral hall; five visitors, two frontal and three side/back."},
+    "xa05_brick_lounge.png": {"sha256":"845BFB0FFF0B033D5CDF0FAEB6A004E5D69BDC6D2D22F32FC6E115F52278823A","generation_prompt":"Brick museum lounge; two visitors in opposing profiles conversing."},
+    "xa06_display_room.png": {"sha256":"103F5CE66EAE317F26E5A9EBDEF3859557C44794A9F03C4855AF8181881983A4","generation_prompt":"Warm display room; one seated frontal visitor and two standing backs."},
+    "xa07_atrium_wave.png": {"sha256":"7F63FE230B5FB82DB06B983425BFA27E5D27640C025A87E503FE338457EA8DAC","generation_prompt":"Bright museum atrium; one frontal visitor with raised hand distractor."},
+    "xa08_industrial_atrium.png": {"sha256":"FAAFFCE91D35B27BCC3B51531C8508F4363B207E1CADAFF8D299DF225E5C7C71","generation_prompt":"Industrial museum atrium; four varied-distance visitors with mixed orientation."}
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "purpose":"independent checker view",
+  "dataset":"pilot-v1",
+  "case_count":26,
+  "image_count":4,
+  "groups":[
+    {"group_id":"g00","image":"assets/scene_00_no_people.png","observed_audience":{"visible_count":0,"facing_robot_count":0},"case_ids":["g00-a01","g00-g01","g00-s01","g00-a02","g00-c01","g00-c02","g00-c03"]},
+    {"group_id":"g01","image":"assets/scene_01_two_facing.png","observed_audience":{"visible_count":2,"facing_robot_count":2},"case_ids":["g01-a01","g01-s01","g01-g01","g01-a02","g01-c01","g01-c02","g01-c03"]},
+    {"group_id":"g02","image":"assets/scene_02_mixed.png","observed_audience":{"visible_count":3,"facing_robot_count":2},"case_ids":["g02-a01","g02-s01","g02-g01","g02-c01","g02-c02","g02-c03"]},
+    {"group_id":"g03","image":"assets/scene_03_two_back.png","observed_audience":{"visible_count":2,"facing_robot_count":0},"case_ids":["g03-a01","g03-s01","g03-g01","g03-c01","g03-c02","g03-c03"]}
+  ],
+  "task_counts":{"audience":6,"scene_description":5,"scene_and_audience":1,"start_tour":4,"goto_exhibit":6,"controls":6},
+  "review_notes":"Counts/orientations are manually observed from generated images. Review scene text semantically with rubrics.md; do not treat metadata as model input or oracle evidence. All groups are dev only."
+}

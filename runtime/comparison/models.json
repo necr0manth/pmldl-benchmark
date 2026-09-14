@@ -1,0 +1,70 @@
+{
+  "runtime": {
+    "name": "llama.cpp b10941 Vulkan",
+    "commit": "4a8993735",
+    "archive_sha256": "daa2475068ceeef57aa0e5c70dde4739991ab1d0cc4aa601f9bd905ad96be79a",
+    "server": "../llama.cpp-b10941-vulkan/llama-server.exe"
+  },
+  "models": {
+    "qwen": {
+      "alias": "qwen3.5-4b-q4km",
+      "family": "Qwen3.5",
+      "base_repo": "Qwen/Qwen3.5-4B",
+      "base_revision": "851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a",
+      "gguf_repo": "unsloth/Qwen3.5-4B-GGUF",
+      "gguf_revision": "e87f176479d0855a907a41277aca2f8ee7a09523",
+      "license": "Apache-2.0",
+      "model": "../../models/Qwen3.5-4B-GGUF/Qwen3.5-4B-Q4_K_M.gguf",
+      "model_sha256": "00fe7986ff5f6b463e62455821146049db6f9313603938a70800d1fb69ef11a4",
+      "projector": "../../models/Qwen3.5-4B-GGUF/mmproj-F16.gguf",
+      "projector_sha256": "cd88edcf8d031894960bb0c9c5b9b7e1fea6ebee02b9f7ce925a00d12891f864",
+      "precision": "LLM Q4_K_M; projector F16",
+      "reasoning_off": true
+    },
+    "smolvlm2": {
+      "alias": "smolvlm2-2.2b-q4km",
+      "family": "SmolVLM2",
+      "base_repo": "HuggingFaceTB/SmolVLM2-2.2B-Instruct",
+      "base_revision": "482adb537c021c86670beed01cd58990d01e72e4",
+      "gguf_repo": "ggml-org/SmolVLM2-2.2B-Instruct-GGUF",
+      "gguf_revision": "1bc3c9f74ceafd4c8d4411cc9cf188bba3798f91",
+      "license": "Apache-2.0",
+      "model": "../../models/SmolVLM2-2.2B-Instruct-GGUF/SmolVLM2-2.2B-Instruct-Q4_K_M.gguf",
+      "model_sha256": "0cf76814555b8665149075b74ab6b5c1d428ea1d3d01c1918c12012e8d7c9f58",
+      "projector": "../../models/SmolVLM2-2.2B-Instruct-GGUF/mmproj-SmolVLM2-2.2B-Instruct-f16.gguf",
+      "projector_sha256": "db9a3a1648cab1ebc3af4a2b0c8145dd8faebf6f7dd7b16e7dc1842229f14ac4",
+      "precision": "LLM Q4_K_M; projector F16",
+      "reasoning_off": false
+    },
+    "internvl": {
+      "alias": "internvl3.5-4b-q4km",
+      "family": "InternVL 3.5 (Qwen3 language backbone)",
+      "base_repo": "OpenGVLab/InternVL3_5-4B",
+      "base_revision": "481f6e32467eab4e922ccd7fd6cf420441a62331",
+      "gguf_repo": "bartowski/OpenGVLab_InternVL3_5-4B-GGUF",
+      "gguf_revision": "e9319b553f22bd6e3bae10cff2e50985c1ab1d1a",
+      "license": "Apache-2.0",
+      "model": "../../models/InternVL3_5-4B-GGUF/OpenGVLab_InternVL3_5-4B-Q4_K_M.gguf",
+      "model_sha256": "7c1612b6896ad14caa501238e72afa17a600651d0984225e3ff78b39de86099c",
+      "projector": "../../models/InternVL3_5-4B-GGUF/mmproj-OpenGVLab_InternVL3_5-4B-f16.gguf",
+      "projector_sha256": "0f9704972fcb9cb0a4f2c0f4eb7fe4f58e53ccd4b06ec17cf7a80271aa963eb7",
+      "precision": "LLM Q4_K_M; projector F16",
+      "reasoning_off": false
+    },
+    "gemma3": {
+      "alias": "gemma3-4b-it-q4km",
+      "family": "Gemma 3",
+      "base_repo": "google/gemma-3-4b-it",
+      "base_revision": "093f9f388b31de276ce2de164bdc2081324b9767",
+      "gguf_repo": "ggml-org/gemma-3-4b-it-GGUF",
+      "gguf_revision": "d0976223747697cb51e056d85c532013931fe52e",
+      "license": "Gemma",
+      "model": "../../models/Gemma-3-4B-IT-GGUF/gemma-3-4b-it-Q4_K_M.gguf",
+      "model_sha256": "882e8d2db44dc554fb0ea5077cb7e4bc49e7342a1f0da57901c0802ea21a0863",
+      "projector": "../../models/Gemma-3-4B-IT-GGUF/mmproj-model-f16.gguf",
+      "projector_sha256": "8c0fb064b019a6972856aaae2c7e4792858af3ca4561be2dbf649123ba6c40cb",
+      "precision": "LLM Q4_K_M; projector F16",
+      "reasoning_off": false
+    }
+  }
+}

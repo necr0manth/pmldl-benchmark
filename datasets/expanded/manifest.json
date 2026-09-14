@@ -1,0 +1,110 @@
+{
+  "dataset_version": "expanded-dev-v1",
+  "created_at": "2026-09-13",
+  "status": "synthetic_development_only_not_frozen_holdout",
+  "split_policy": "all source-image families retain their original group_id and dev split",
+  "lineage": "Exact merge of pilot-v1, expanded-part-a, and expanded-part-b; image paths are rebased and assets are not copied.",
+  "case_count": 106,
+  "group_count": 20,
+  "image_count": 20,
+  "sources": [
+    {
+      "path": "../pilot/cases.jsonl",
+      "case_count": 26,
+      "sha256": "D54FA9C926DC93C60FD6C8C2CD307F13085EDD6A8B247A298357ACEF960260F6"
+    },
+    {
+      "path": "part_a/cases.jsonl",
+      "case_count": 40,
+      "sha256": "20DD7B9651DC33D38FFC0DB9E3AE691099F3B2ECCFDACFF350C9A15D34570E49"
+    },
+    {
+      "path": "part_b/cases.jsonl",
+      "case_count": 40,
+      "sha256": "DFB30C51BB566FB320352B400B9A6BC9F79D2AF0453DF121950D800D70C4D976"
+    }
+  ],
+  "assets": [
+    {
+      "path": "../pilot/assets/scene_00_no_people.png",
+      "sha256": "412B16F9B72D7992831FA7F53BA314AC1C8817221F02C25BB433289C8DBD5C59"
+    },
+    {
+      "path": "../pilot/assets/scene_01_two_facing.png",
+      "sha256": "370AD2F5563398998B59AAD4744CF342725B8ACB1C79976A173609FF161D68A7"
+    },
+    {
+      "path": "../pilot/assets/scene_02_mixed.png",
+      "sha256": "4981D8630026A90773B57E2F25A8377645F8C5282A02F0BB1803173C26282B42"
+    },
+    {
+      "path": "../pilot/assets/scene_03_two_back.png",
+      "sha256": "70F3869613B3AC5355B304196BA41A911714F5457B5AE6FAF23550C91F3B2B6D"
+    },
+    {
+      "path": "part_a/assets/xa01_lobby.png",
+      "sha256": "AA8CCE377F47E06F68105737402363EF164C4DB951B67721B1665267B4A238D5"
+    },
+    {
+      "path": "part_a/assets/xa02_corridor.png",
+      "sha256": "F4354CD93C2D93E483550EDF6624E048D186876D97874949A8FBA4D9B26E2329"
+    },
+    {
+      "path": "part_a/assets/xa03_dark_gallery.png",
+      "sha256": "37D252EB0774400FFF8312220939E74D7635C5AEBDD18E5379558F841258B532"
+    },
+    {
+      "path": "part_a/assets/xa04_color_hall.png",
+      "sha256": "01841F7DA914862D78E276F737A5EB708C7823C334551F4FD46F1046FDCBBFB1"
+    },
+    {
+      "path": "part_a/assets/xa05_brick_lounge.png",
+      "sha256": "845BFB0FFF0B033D5CDF0FAEB6A004E5D69BDC6D2D22F32FC6E115F52278823A"
+    },
+    {
+      "path": "part_a/assets/xa06_display_room.png",
+      "sha256": "103F5CE66EAE317F26E5A9EBDEF3859557C44794A9F03C4855AF8181881983A4"
+    },
+    {
+      "path": "part_a/assets/xa07_atrium_wave.png",
+      "sha256": "7F63FE230B5FB82DB06B983425BFA27E5D27640C025A87E503FE338457EA8DAC"
+    },
+    {
+      "path": "part_a/assets/xa08_industrial_atrium.png",
+      "sha256": "FAAFFCE91D35B27BCC3B51531C8508F4363B207E1CADAFF8D299DF225E5C7C71"
+    },
+    {
+      "path": "part_b/assets/xb01_poster_gallery.png",
+      "sha256": "4669EBF2E27FDDDEF566E9FB2686B7A5E937584DF35CC79A525E702F0AC47271"
+    },
+    {
+      "path": "part_b/assets/xb02_statue_visitor.png",
+      "sha256": "5FAECC41EF521F5F9A6A04F771A50D6E0AE580DF338AD655FA7337C0DF9EBA3C"
+    },
+    {
+      "path": "part_b/assets/xb03_three_overlap.png",
+      "sha256": "5292682A35ABE3111C345EC9639C7D2EDC7BAFF02C9A76D96AB0F7039E1302DD"
+    },
+    {
+      "path": "part_b/assets/xb04_edge_crop.png",
+      "sha256": "A980157A4A117D7DF35CDC92E045C661154B12527D9C5E83FEA181B6C60EC4A9"
+    },
+    {
+      "path": "part_b/assets/xb05_long_corridor.png",
+      "sha256": "1F6C645D9FC7A7D438B5A10CAA5EEAD6C6FCAFF6FD9242FFEEBD9327C53C122C"
+    },
+    {
+      "path": "part_b/assets/xb06_backlit_window.png",
+      "sha256": "8EACA61356BC79FC69002E22F202E92C2D95DCEFF19EA4A5CC95CB7240749755"
+    },
+    {
+      "path": "part_b/assets/xb07_dim_gallery.png",
+      "sha256": "7454FDC7A0FCE072371C071CC81559332370B1466842F0DFDEF227022DEA602C"
+    },
+    {
+      "path": "part_b/assets/xb08_phone_distractors.png",
+      "sha256": "7E3FAAC832384DEA97BF4614C56B3E22D84647438902F586280BF991DF27A54F"
+    }
+  ],
+  "cases_sha256": "E9772611575F4565041367AF1E384E7F50CAFF238A1F09C832AF6B4F8153B266"
+}
