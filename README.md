@@ -45,6 +45,20 @@ python -m vlm_benchmark run .\datasets\methods\cases.jsonl `
 
 For the four sequential unified model runs, use `configs/methods-qwen3.5-4b-q4km.json`, `configs/methods-gemma3-4b-it-q4km.json`, `configs/methods-internvl3.5-4b-q4km.json`, and `configs/methods-smolvlm2-2.2b-q4km.json`. They retain the v2 decision prompt, `fence-only` normalization, and existing backend model aliases. The 57 `decide` rows use v2 field masks/scoring; the two image-only methods use their pinned prompts and method-specific scores.
 
+### Method-specific prompt configuration
+
+By default, the benchmark engine uses:
+- `prompts/decision-v2.txt` for `decide`
+- `prompts/people-system.txt` for `check_people`
+- `prompts/description-system.txt` for `describe_image`
+
+You can customize the prompt for each method independently in the run configuration JSON:
+- `prompt_path` (or `decision_prompt_path`): Path to the `decide` prompt template.
+- `people_prompt_path`: Path to the `check_people` prompt template.
+- `description_prompt_path`: Path to the `describe_image` prompt template.
+
+All configured prompt files are validated, resolved relative to the config file location, and recorded with their individual SHA-256 hashes in `manifest.json` for full reproducibility.
+
 ## Run a real VLM
 
 The backend must accept multimodal OpenAI-compatible requests at `<base_url>/chat/completions`, normally `/v1/chat/completions`. Images are sent as base64 data URLs in message content.
@@ -146,7 +160,66 @@ vlm-benchmark v2-run .\datasets\v2\cases.jsonl `
 powershell -ExecutionPolicy Bypass -File .\runtime\stop-local-vlm.ps1
 ```
 
-The bundled start/stop scripts are specifically wired to the Qwen paths and alias above. For a different VLM server, start it with its own tooling and use an Option A config.
+The bundled start/stop scripts are specifically wired to the Qwen paths and alias above, and safely handle path names containing spaces (e.g. OneDrive or desktop directories). For a different VLM server, start it with its own tooling and use an Option A config.
+
+## Prompt ablation study and run comparison
+
+The repository includes pre-built configs and prompt templates to evaluate the impact of in-context exemplars on small VLMs (e.g. Qwen3.5-4B):
+
+- **Zero-Shot (`0shot`)**: `configs/methods-qwen3.5-4b-0shot.json` (uses standard instructions without exemplars).
+- **One-Shot (`1shot`)**: `configs/methods-qwen3.5-4b-1shot.json` (uses `prompts/decision-v2-oneshot.txt` and `prompts/people-oneshot.txt`).
+- **Few-Shot (`fewshot`)**: `configs/methods-qwen3.5-4b-fewshot.json` (uses `prompts/decision-v2-fewshot.txt` and `prompts/people-fewshot.txt` with balanced exemplars for attentive visitor, empty scene, turned away, and ambiguous).
+
+### Running the ablation suite
+
+With the local VLM server running:
+
+```powershell
+python -m vlm_benchmark run .\datasets\methods\cases.jsonl `
+  --config .\configs\methods-qwen3.5-4b-0shot.json `
+  --output .\runs\qwen-prompt-study\methods-qwen3_5-4b-0shot
+
+python -m vlm_benchmark run .\datasets\methods\cases.jsonl `
+  --config .\configs\methods-qwen3.5-4b-1shot.json `
+  --output .\runs\qwen-prompt-study\methods-qwen3_5-4b-1shot
+
+python -m vlm_benchmark run .\datasets\methods\cases.jsonl `
+  --config .\configs\methods-qwen3.5-4b-fewshot.json `
+  --output .\runs\qwen-prompt-study\methods-qwen3_5-4b-fewshot
+```
+
+### Side-by-side run comparison tool
+
+Use `scripts/compare_runs.py` to compare any set of run directories or an entire study folder:
+
+```powershell
+python scripts/compare_runs.py .\runs\qwen-prompt-study
+```
+
+
+## Fine-tuning Qwen3.5-4B with Few-Shot Prompts
+
+The repository includes a complete LoRA / QLoRA fine-tuning pipeline in [`scripts/train_lora_qwen.py`](scripts/train_lora_qwen.py) and a PowerShell launcher in [`scripts/run_finetune.ps1`](scripts/run_finetune.ps1). It fine-tunes `Qwen/Qwen3.5-4B` using the empirical findings from the prompt study:
+
+- **Optimal Few-Shot Prompt Conditioning**: Uses [`prompts/people-fewshot.txt`](prompts/people-fewshot.txt) containing the 4 balanced exemplars (`idle` attentive, `interrupt` empty, `interrupt` turned away, `abstain` ambiguous) that achieved 100% JSON valid schema and 58.6% action accuracy.
+- **Selective Loss Masking**: Masks all system prompt, user query, and image tokens to `-100`, computing backpropagation loss exclusively on the assistant's JSON tool decision.
+- **8 GB VRAM Optimization**: Uses 4-bit NF4 QLoRA quantization via `bitsandbytes`, gradient checkpointing, and paged AdamW optimizer to run comfortably on consumer laptop GPUs (e.g. RTX 4060 8GB).
+- **Multi-task Preservation**: Optionally trains across all three methods (`check_people`, `decide`, `describe_image`) to avoid catastrophic forgetting of robot navigation and tool schemas.
+
+### Quick start
+
+```powershell
+# 1. Verify dataset, chat templating, and tokenization without training:
+powershell -ExecutionPolicy Bypass -File .\scripts\run_finetune.ps1 -DryRun
+
+# 2. Fine-tune on audience engagement (check_people):
+powershell -ExecutionPolicy Bypass -File .\scripts\run_finetune.ps1 -MethodFilter "check_people" -Epochs 3
+
+# 3. Full multi-task training with automated weight merging:
+powershell -ExecutionPolicy Bypass -File .\scripts\run_finetune.ps1 -MethodFilter "all" -Epochs 3 -MergeAndSave
+```
+
+After training, the LoRA adapter is saved to `outputs/qwen3.5-4b-fewshot-lora`. When `-MergeAndSave` is passed, the script merges the adapter weights with the base model into `outputs/qwen3.5-4b-fewshot-lora-merged` for direct GGUF quantization and serving with `llama-server`.
 
 ## Normalization and results
 

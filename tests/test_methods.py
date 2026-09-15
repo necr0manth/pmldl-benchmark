@@ -41,3 +41,55 @@ def test_people_invalid_response_stays_raw_failure_and_public_abstains():
     assert detail["error_kind"] == "invalid_json"
     assert detail["parsed"] is None
     assert engine.check_people(b"image")["abstain"] is True
+
+
+def test_configurable_people_and_description_prompts():
+    backend = MessageCapture('{"tool":"idle","args":{},"confidence":0.9,"abstain":false}')
+    engine = DecisionEngine(
+        backend,
+        people_prompt_template="CUSTOM_PEOPLE_PROMPT",
+        description_prompt_template="CUSTOM_DESCRIPTION_PROMPT",
+    )
+    engine.check_people(b"fake_image")
+    assert backend.messages[0]["role"] == "system"
+    assert backend.messages[0]["content"] == "CUSTOM_PEOPLE_PROMPT"
+
+    engine.describe_image(b"fake_image")
+    assert backend.messages[0]["role"] == "system"
+    assert backend.messages[0]["content"] == "CUSTOM_DESCRIPTION_PROMPT"
+
+
+def test_configure_loads_custom_prompt_paths(tmp_path):
+    p_people = tmp_path / "custom_people.txt"
+    p_people.write_text("CUSTOM_PEOPLE_FROM_FILE", encoding="utf-8")
+    p_desc = tmp_path / "custom_desc.txt"
+    p_desc.write_text("CUSTOM_DESC_FROM_FILE", encoding="utf-8")
+
+    from vlm_benchmark.core import configure
+    engine = configure({
+        "backend": {"type": "mock", "default_response": '{"tool":"idle","args":{},"confidence":0,"abstain":true}'},
+        "people_prompt_path": str(p_people),
+        "description_prompt_path": str(p_desc),
+    })
+    assert engine.people_prompt_template == "CUSTOM_PEOPLE_FROM_FILE"
+    assert engine.description_prompt_template == "CUSTOM_DESC_FROM_FILE"
+
+
+def test_train_dataset_validity_and_isolation():
+    from pathlib import Path
+    from vlm_benchmark.dataset import load_datasets
+
+    root = Path(__file__).resolve().parents[1]
+    train_cases = root / "datasets" / "train" / "cases.jsonl"
+    methods_cases = root / "datasets" / "methods" / "cases.jsonl"
+
+    if train_cases.is_file():
+        # Validate train alone
+        cases = load_datasets([train_cases])
+        assert len(cases) == 330
+        assert all(c["split"] == "train" for c in cases)
+
+        # Validate no split/group leakage with dev benchmark
+        combined = load_datasets([methods_cases, train_cases])
+        assert len(combined) == 125 + 330
+

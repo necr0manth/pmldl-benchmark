@@ -57,6 +57,8 @@ def run_benchmark(
         "splits": {split: sum(case["split"] == split for case in cases) for split in sorted({case["split"] for case in cases})},
         "group_count": len({case["group_id"] for case in cases}),
         "prompt_sha256": hashlib.sha256(engine.prompt_template.encode("utf-8")).hexdigest(),
+        "people_prompt_sha256": hashlib.sha256(engine.people_prompt_template.encode("utf-8")).hexdigest(),
+        "description_prompt_sha256": hashlib.sha256(engine.description_prompt_template.encode("utf-8")).hexdigest(),
         "python": sys.version,
         "platform": platform.platform(),
         "case_count": len(cases),

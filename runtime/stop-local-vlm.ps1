@@ -1,6 +1,10 @@
 $ErrorActionPreference = "Stop"
 $pidPath = Join-Path $PSScriptRoot "local-vlm.pid"
-$serverPath = Join-Path $PSScriptRoot "llama.cpp-b10941-vulkan\llama-server.exe"
+$serverPath = if (Test-Path (Join-Path $PSScriptRoot "llama.cpp-b10941-vulkan\llama-server.exe")) {
+    (Resolve-Path (Join-Path $PSScriptRoot "llama.cpp-b10941-vulkan\llama-server.exe")).Path
+} else {
+    Join-Path $PSScriptRoot "llama.cpp-b10941-vulkan\llama-server.exe"
+}
 
 if (-not (Test-Path $pidPath)) {
     Write-Output "No local VLM PID file; nothing stopped."

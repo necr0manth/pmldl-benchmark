@@ -27,9 +27,18 @@ MISSION_FIELDS = {
 
 
 class DecisionEngine:
-    def __init__(self, backend: Backend, prompt_template: str | None = None, output_normalization: str = "strict"):
+    def __init__(
+        self,
+        backend: Backend,
+        prompt_template: str | None = None,
+        output_normalization: str = "strict",
+        people_prompt_template: str | None = None,
+        description_prompt_template: str | None = None,
+    ):
         self.backend = backend
         self.prompt_template = prompt_template or DEFAULT_PROMPT.read_text(encoding="utf-8")
+        self.people_prompt_template = people_prompt_template or PEOPLE_PROMPT.read_text(encoding="utf-8")
+        self.description_prompt_template = description_prompt_template or DESCRIPTION_PROMPT.read_text(encoding="utf-8")
         if output_normalization not in {"strict", "fence-only"}:
             raise ValueError(f"unsupported output normalization: {output_normalization}")
         self.output_normalization = output_normalization
@@ -111,7 +120,7 @@ class DecisionEngine:
 
     def check_people_detailed(self, image: Any) -> dict[str, Any]:
         image_status, image_bytes, mime_type = normalize_image(image)
-        return self._image_json_call(PEOPLE_PROMPT.read_text(encoding="utf-8"), image_status, image_bytes, mime_type, validate_people)
+        return self._image_json_call(self.people_prompt_template, image_status, image_bytes, mime_type, validate_people)
 
     def check_people(self, image: Any) -> dict:
         detail = self.check_people_detailed(image)
@@ -121,7 +130,7 @@ class DecisionEngine:
 
     def describe_image_detailed(self, image: Any) -> dict[str, Any]:
         image_status, image_bytes, mime_type = normalize_image(image)
-        return self._image_text_call(DESCRIPTION_PROMPT.read_text(encoding="utf-8"), image_status, image_bytes, mime_type)
+        return self._image_text_call(self.description_prompt_template, image_status, image_bytes, mime_type)
 
     def describe_image(self, image: Any) -> str:
         detail = self.describe_image_detailed(image)
@@ -229,15 +238,27 @@ def configure(config: str | Path | dict[str, Any]) -> DecisionEngine:
     global _default_engine
     config_path = Path(config).resolve() if isinstance(config, (str, Path)) else None
     data = json.loads(config_path.read_text(encoding="utf-8")) if config_path else dict(config)
-    prompt_path = data.get("prompt_path")
-    if prompt_path:
-        path = Path(prompt_path)
+
+    def _read_prompt(key: str) -> str | None:
+        path_str = data.get(key)
+        if not path_str:
+            return None
+        path = Path(path_str)
         if config_path and not path.is_absolute():
             path = config_path.parent / path
-        template = path.read_text(encoding="utf-8")
-    else:
-        template = None
-    _default_engine = DecisionEngine(backend_from_config(data["backend"]), template, data.get("output_normalization", "strict"))
+        return path.read_text(encoding="utf-8")
+
+    template = _read_prompt("prompt_path")
+    people_template = _read_prompt("people_prompt_path")
+    description_template = _read_prompt("description_prompt_path")
+
+    _default_engine = DecisionEngine(
+        backend=backend_from_config(data["backend"]),
+        prompt_template=template,
+        output_normalization=data.get("output_normalization", "strict"),
+        people_prompt_template=people_template,
+        description_prompt_template=description_template,
+    )
     return _default_engine
 
 

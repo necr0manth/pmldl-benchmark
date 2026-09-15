@@ -25,8 +25,8 @@ if ($listener) {
 }
 
 $arguments = @(
-    "--model", $modelPath,
-    "--mmproj", $projectorPath,
+    "--model", "`"$modelPath`"",
+    "--mmproj", "`"$projectorPath`"",
     "--alias", "qwen3.5-4b-q4km",
     "--host", "127.0.0.1",
     "--port", $Port,
