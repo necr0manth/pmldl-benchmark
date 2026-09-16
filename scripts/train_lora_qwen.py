@@ -6,6 +6,7 @@ import argparse
 import json
 import logging
 import os
+os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
 import sys
 from pathlib import Path
 from typing import Any
@@ -70,7 +71,15 @@ class QwenFewShotVLMDataset(torch.utils.data.Dataset):
         if method == "check_people":
             system_prompt = self.people_prompt
             user_text = "Определи статус внимания посетителей перед роботом."
-            assistant_content = json.dumps(case["expected"], ensure_ascii=False)
+            resp_obj = dict(case["expected"])
+            if "confidence" not in resp_obj:
+                resp_obj["confidence"] = 0.0 if resp_obj.get("abstain") else 0.95
+            ordered_keys = ["tool", "args", "confidence", "abstain"]
+            ordered_obj = {k: resp_obj[k] for k in ordered_keys if k in resp_obj}
+            for k, v in resp_obj.items():
+                if k not in ordered_obj:
+                    ordered_obj[k] = v
+            assistant_content = json.dumps(ordered_obj, ensure_ascii=False)
             messages = [
                 {"role": "system", "content": system_prompt},
                 {
@@ -113,7 +122,15 @@ class QwenFewShotVLMDataset(torch.utils.data.Dataset):
                 .replace("{extra_context}", extra_context)
                 .replace("{{EXTRA_CONTEXT}}", extra_context)
             )
-            assistant_content = json.dumps(case["expected"], ensure_ascii=False)
+            resp_obj = dict(case["expected"])
+            if "confidence" not in resp_obj:
+                resp_obj["confidence"] = 0.0 if resp_obj.get("abstain") else 0.95
+            ordered_keys = ["tool", "args", "confidence", "abstain"]
+            ordered_obj = {k: resp_obj[k] for k in ordered_keys if k in resp_obj}
+            for k, v in resp_obj.items():
+                if k not in ordered_obj:
+                    ordered_obj[k] = v
+            assistant_content = json.dumps(ordered_obj, ensure_ascii=False)
             messages = [
                 {
                     "role": "user",
@@ -135,21 +152,18 @@ class QwenFewShotVLMDataset(torch.utils.data.Dataset):
 
         # 5. Mask prompt tokens from loss calculation (loss only on assistant output)
         labels = input_ids.clone()
-        assistant_header = "<|im_start|>assistant\n"
-        assistant_bytes = self.processor.tokenizer.encode(assistant_header, add_special_tokens=False)
-
-        # Find assistant start index
         match_idx = -1
-        for i in range(len(input_ids) - len(assistant_bytes) + 1):
-            if input_ids[i : i + len(assistant_bytes)].tolist() == assistant_bytes:
-                match_idx = i + len(assistant_bytes)
+        for candidate_header in ("</think>\n\n", "<|im_start|>assistant\n"):
+            header_bytes = self.processor.tokenizer.encode(candidate_header, add_special_tokens=False)
+            for i in range(len(input_ids) - len(header_bytes) + 1):
+                if input_ids[i : i + len(header_bytes)].tolist() == header_bytes:
+                    match_idx = i + len(header_bytes)
+                    break
+            if match_idx != -1:
                 break
 
         if match_idx != -1:
             labels[:match_idx] = -100
-        else:
-            # Fallback: keep standard labels
-            pass
 
         sample = {
             "input_ids": input_ids,
@@ -251,7 +265,11 @@ def main() -> None:
     # Load processor
     from transformers import AutoProcessor
     logger.info("Loading AutoProcessor...")
-    processor = AutoProcessor.from_pretrained(args.model_id)
+    processor = AutoProcessor.from_pretrained(
+        args.model_id,
+        min_pixels=256 * 28 * 28,
+        max_pixels=512 * 28 * 28,
+    )
 
     # Initialize PyTorch Dataset
     dataset = QwenFewShotVLMDataset(
@@ -343,8 +361,10 @@ def main() -> None:
         save_steps=save_st,
         save_total_limit=2,
         gradient_checkpointing=True,
+        gradient_checkpointing_kwargs={"use_reentrant": False},
         bf16=torch.cuda.is_available() and torch.cuda.is_bf16_supported(),
         fp16=torch.cuda.is_available() and not torch.cuda.is_bf16_supported(),
+        optim="paged_adamw_8bit",
         dataloader_num_workers=0,
         report_to="none",
     )

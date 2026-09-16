@@ -212,8 +212,10 @@ def validate_people(value: Any) -> list[str]:
     if not isinstance(value, dict):
         return ["people decision must be an object"]
     errors: list[str] = []
-    if set(value) != {"tool", "args", "confidence", "abstain"}:
-        errors.append("top-level fields must be exactly tool,args,confidence,abstain")
+    required = {"tool", "args", "abstain"}
+    allowed = {"tool", "args", "confidence", "abstain"}
+    if not required.issubset(set(value)) or not set(value).issubset(allowed):
+        errors.append("top-level fields must contain tool,args,abstain and optional confidence")
     if value.get("tool") not in {"idle", "interrupt"}:
         errors.append("tool must be idle or interrupt")
     if not isinstance(value.get("args"), dict):
@@ -222,8 +224,9 @@ def validate_people(value: Any) -> list[str]:
         errors.append("idle args must be empty")
     elif value.get("tool") == "interrupt" and not set(value["args"]).issubset({"reason", "people_count", "looking_at_robot"}):
         errors.append("interrupt args contain unsupported fields")
-    if isinstance(value.get("confidence"), bool) or not isinstance(value.get("confidence"), (int, float)) or not 0 <= value.get("confidence", -1) <= 1:
-        errors.append("confidence must be finite and in [0,1]")
+    if "confidence" in value:
+        if isinstance(value.get("confidence"), bool) or not isinstance(value.get("confidence"), (int, float)) or not 0 <= value.get("confidence", -1) <= 1:
+            errors.append("confidence must be finite and in [0,1]")
     if not isinstance(value.get("abstain"), bool):
         errors.append("abstain must be boolean")
     if value.get("abstain") is True and not (value.get("tool") == "idle" and value.get("args") == {}):

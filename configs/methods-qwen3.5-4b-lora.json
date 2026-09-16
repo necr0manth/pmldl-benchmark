@@ -1,0 +1,15 @@
+{
+  "name": "methods-qwen3.5-4b-lora",
+  "prompt_path": "../prompts/decision-v2-fewshot.txt",
+  "people_prompt_path": "../prompts/people-fewshot.txt",
+  "description_prompt_path": "../prompts/description-system.txt",
+  "output_normalization": "fence-only",
+  "backend": {
+    "type": "transformers-local",
+    "model_id": "Qwen/Qwen3.5-4B",
+    "adapter_path": "outputs/qwen3.5-4b-fewshot-lora",
+    "quantization": "4bit",
+    "max_tokens": 256,
+    "temperature": 0
+  }
+}

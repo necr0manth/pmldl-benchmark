@@ -12,12 +12,12 @@
     .\scripts\run_finetune.ps1 -DryRun
 
 .EXAMPLE
-    # Run full fine-tuning on audience perception (check_people only):
-    .\scripts\run_finetune.ps1 -MethodFilter "check_people" -Epochs 3
+    # Run multi-task fine-tuning across all methods:
+    .\scripts\run_finetune.ps1 -Epochs 1
 
 .EXAMPLE
-    # Run full multi-task fine-tuning and merge weights:
-    .\scripts\run_finetune.ps1 -MethodFilter "all" -Epochs 3 -MergeAndSave
+    # Run fine-tuning and merge adapter weights:
+    .\scripts\run_finetune.ps1 -Epochs 1 -MergeAndSave
 #>
 
 param(

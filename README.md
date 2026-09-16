@@ -204,7 +204,7 @@ The repository includes a complete LoRA / QLoRA fine-tuning pipeline in [`script
 - **Optimal Few-Shot Prompt Conditioning**: Uses [`prompts/people-fewshot.txt`](prompts/people-fewshot.txt) containing the 4 balanced exemplars (`idle` attentive, `interrupt` empty, `interrupt` turned away, `abstain` ambiguous) that achieved 100% JSON valid schema and 58.6% action accuracy.
 - **Selective Loss Masking**: Masks all system prompt, user query, and image tokens to `-100`, computing backpropagation loss exclusively on the assistant's JSON tool decision.
 - **8 GB VRAM Optimization**: Uses 4-bit NF4 QLoRA quantization via `bitsandbytes`, gradient checkpointing, and paged AdamW optimizer to run comfortably on consumer laptop GPUs (e.g. RTX 4060 8GB).
-- **Multi-task Preservation**: Optionally trains across all three methods (`check_people`, `decide`, `describe_image`) to avoid catastrophic forgetting of robot navigation and tool schemas.
+- **Multi-Task Training**: Jointly trains across all three methods (`check_people`, `decide`, `describe_image`) to maintain high competence across robot navigation, perception, and general scene queries.
 
 ### Quick start
 
@@ -212,14 +212,22 @@ The repository includes a complete LoRA / QLoRA fine-tuning pipeline in [`script
 # 1. Verify dataset, chat templating, and tokenization without training:
 powershell -ExecutionPolicy Bypass -File .\scripts\run_finetune.ps1 -DryRun
 
-# 2. Fine-tune on audience engagement (check_people):
-powershell -ExecutionPolicy Bypass -File .\scripts\run_finetune.ps1 -MethodFilter "check_people" -Epochs 3
+# 2. Fine-tune across all methods (check_people, decide, describe_image):
+powershell -ExecutionPolicy Bypass -File .\scripts\run_finetune.ps1 -MethodFilter "all" -Epochs 1
 
-# 3. Full multi-task training with automated weight merging:
-powershell -ExecutionPolicy Bypass -File .\scripts\run_finetune.ps1 -MethodFilter "all" -Epochs 3 -MergeAndSave
+# 3. Benchmark the fine-tuned LoRA model directly:
+python -m vlm_benchmark run .\datasets\methods\cases.jsonl `
+  --config .\configs\methods-qwen3.5-4b-lora.json `
+  --output .\runs\qwen-lora-benchmark
+
+# 4. Compare baseline and fine-tuned runs side-by-side:
+python .\scripts\compare_runs.py `
+  .\runs\qwen-prompt-study\methods-qwen3_5-4b-0shot `
+  .\runs\qwen-prompt-study\methods-qwen3_5-4b-fewshot `
+  .\runs\qwen-lora-benchmark\methods-qwen3_5-4b-lora
 ```
 
-After training, the LoRA adapter is saved to `outputs/qwen3.5-4b-fewshot-lora`. When `-MergeAndSave` is passed, the script merges the adapter weights with the base model into `outputs/qwen3.5-4b-fewshot-lora-merged` for direct GGUF quantization and serving with `llama-server`.
+After training, the LoRA adapter is saved to `outputs/qwen3.5-4b-fewshot-lora`. The benchmark natively loads HF PEFT 4-bit quantized adapters using `transformers-local` backend without requiring external server processes. When `-MergeAndSave` is passed, the script merges the adapter weights with the base model into `outputs/qwen3.5-4b-fewshot-lora-merged` for direct GGUF quantization and serving with `llama-server`.
 
 ## Normalization and results
 
